@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#327AB9</color>
+    <color name="colorPrimaryDark">#327AB9</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="statusBarColor">@color/background_color_light</color>
+    <color name="backgroundColor">@color/background_color_light</color>
+    <color name="toolbarColor">@color/background_color_light</color>
+    <color name="chipBackgroundColor">@color/background_color_light</color>
+
+    <color name="ic_launcher_background">#FFFFFF</color>
+
+    <style name="Widget.AppbarTextView" parent="Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <color name="notification">#3F51B5</color>
+    <color name="icon_background">#ff3f51b5</color>
+
+    <color name="background_color_light">#fafafa</color>
+    <color name="accent_color_light">#1a73e8</color>
+
+    <color name="background_color_dark">@color/material_grey_800</color>
+
+    <color name="app_color_light">#3F51B5</color>
+    <color name="app_color_dark">#B1B8DF</color>
+
+    <color name="icon_color">@color/black</color>
+</resources>

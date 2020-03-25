@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">CUMTD Tracker</string>
+    <string name="no_departure">No Departure is Scheduled\nin the Next 60 Minutes</string>
+</resources>

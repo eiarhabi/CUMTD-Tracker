@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="units">
+        <item>Imperial (foot/feet/ft.)</item>
+        <item>Metric (meter/meters/m.)</item>
+    </string-array>
+
+    <string-array name="units_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+</resources>
