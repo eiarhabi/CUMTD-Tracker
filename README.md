@@ -4,5 +4,5 @@ A Bus Tracker for Champaign-Urbana Mass Transit District with latest Meterial De
 
 **TODO**:
 
-Add route information page
-Add search function
+1. Add route information page
+2. Add search function
