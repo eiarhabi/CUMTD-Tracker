@@ -2,6 +2,8 @@
 
 A Bus Tracker for Champaign-Urbana Mass Transit District with latest Meterial Design. Under Development
 
-### TODO:
+**TODO**:
+
 Add route information page
+
 Add search function
