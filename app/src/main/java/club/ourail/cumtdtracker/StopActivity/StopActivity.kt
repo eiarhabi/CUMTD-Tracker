@@ -59,12 +59,13 @@ class StopActivity : AppCompatActivity() {
             } // Night mode is not active, we're using the light theme
         }
 
-
+        val arrow = ContextCompat.getDrawable(this, R.drawable.ic_arrow_back_white_24dp)
         toolbar = findViewById(R.id.toolbar2)
         toolbar.title = title
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(arrow)
 
         swipeLayout = findViewById(R.id.stop)
         swipeLayout.setOnRefreshListener {

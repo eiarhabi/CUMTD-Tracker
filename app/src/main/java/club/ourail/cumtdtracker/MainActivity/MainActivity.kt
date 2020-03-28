@@ -42,8 +42,8 @@ class MainActivity : AppCompatActivity() {
 
     private var lat = -9999.99
     private var lon = -9999.99
-    private val url = "https://developer.cumtd.com/"//resources.getString(R.string.url)
-    private var key = "e6a7c2b0bdb741569cc69a1505a6c08e"//resources.getString(R.string.api_key)
+    private val url = "https://developer.cumtd.com/"//
+    private var key = "e6a7c2b0bdb741569cc69a1505a6c08e"//
 
     private var stops = mutableListOf<Stop>()
     private lateinit var warning: TextView
@@ -165,7 +165,6 @@ class MainActivity : AppCompatActivity() {
             override fun onFailure(call: Call<StopResponse>, t: Throwable) {
                 swipeLayout.isRefreshing = false
                 warning.text = t.message
-//                Snackbar.make(swipeLayout, t.message.toString(), Snackbar.LENGTH_SHORT).show()
             }
         })
     }
@@ -173,9 +172,7 @@ class MainActivity : AppCompatActivity() {
 
     fun startLocationUpdates() {
         locationRequest = LocationRequest()
-        locationRequest.interval = 1000
-        locationRequest.fastestInterval = 1000
-        locationRequest.smallestDisplacement = 100f // 170 m = 0.1 mile
+        locationRequest.smallestDisplacement = 50f // 170 m = 0.1 mile
         locationRequest.priority =
             LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY //set according to your app function
         locationCallback = object : LocationCallback() {}
@@ -230,11 +227,6 @@ class MainActivity : AppCompatActivity() {
                 } else
                     if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                         warning.text = "Permission denied. Please enable location manually."
-//                        Snackbar.make(
-//                            swipeLayout,
-//                            "Permission denied. Please enable location manually.",
-//                            Snackbar.LENGTH_SHORT
-//                        ).show()
                     }
                 return
             }
@@ -249,12 +241,10 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.settings -> {
-                val intent = Intent(this, SettingsActivity::class.java)
-                startActivity(intent)
+                startActivity(Intent(this, SettingsActivity::class.java))
             }
             R.id.search -> {
-                val intent = Intent(this, SearchActivity::class.java)
-                startActivity(intent)
+                startActivity(Intent(this, SearchActivity::class.java))
             }
         }
         return super.onOptionsItemSelected(item)
