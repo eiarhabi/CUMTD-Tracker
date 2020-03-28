@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">CUMTD Tracker</string>
     <string name="no_departure">No Departure is Scheduled\nin the Next 60 Minutes</string>
+    <string name="api_key">e6a7c2b0bdb741569cc69a1505a6c08e</string>
+    <string name="url">https://developer.cumtd.com/</string>
+    <string name="istop_description">This trip at this stop do not require riders to show identification or pay fare</string>
+    <string name="is_monitored">This bus is being monitored</string>
 </resources>

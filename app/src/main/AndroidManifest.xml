@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -22,7 +22,8 @@
         </activity>
         <activity android:name=".StopActivity" />
         <activity android:name=".SettingsActivity" />
-
+        <activity android:name=".SearchActivity" />
+        <activity android:name=".TripActivity"/>
     </application>
 
 </manifest>

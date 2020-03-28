@@ -9,6 +9,8 @@ class StopResponse {
     @SerializedName("stops")
     var stops = ArrayList<Stop>()
 
+    @SerializedName("status")
+    var status: Status? = null
 }
 
 class Stop {
@@ -42,12 +44,13 @@ class StopPoint {
     var StopName: String? = null
 }
 
-//
-// Parsing Departures
-//
-class BusResponse{
+// Departures
+class BusResponse {
     @SerializedName("departures")
     var Buses = ArrayList<Bus>()
+
+    @SerializedName("status")
+    var status: Status? = null
 }
 
 class Bus {
@@ -65,6 +68,9 @@ class Bus {
 
     @SerializedName("is_istop")
     var IsIstop: Boolean? = null
+
+    @SerializedName("is_monitored")
+    var IsMonitored: Boolean? = null
 }
 
 class Route {
@@ -73,7 +79,31 @@ class Route {
 }
 
 class Trip {
+    @SerializedName("trip_id")
+    val TripId: String? = null
+
     @SerializedName("trip_headsign")
     var TripHeadsign: String? = null
 }
 
+class Status {
+    @SerializedName("code")
+    var code: Int? = null
+
+    @SerializedName("msg")
+    var msg: String? = null
+}
+
+// Trip Stops
+class TripResponse {
+    @SerializedName("stop_times")
+    var StopTimes = ArrayList<TripStop>()
+}
+
+class TripStop {
+    @SerializedName("departure_time")
+    var DepartureTime:String? = null
+
+    @SerializedName("stop_point")
+    var StopPoint: StopPoint? = null
+}

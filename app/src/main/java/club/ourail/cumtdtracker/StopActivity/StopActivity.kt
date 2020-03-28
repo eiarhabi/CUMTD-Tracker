@@ -1,19 +1,23 @@
 package club.ourail.cumtdtracker
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.*
+import android.widget.ListView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
+import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 
 class StopActivity : AppCompatActivity() {
@@ -22,7 +26,9 @@ class StopActivity : AppCompatActivity() {
         var headSign: String,
         var dest: String,
         var expectedMins: Int,
-        var isIstop: Boolean
+        var isIstop: Boolean,
+        var tripId: String,
+        var isMonitored: Boolean
     )
 
     private val url = "https://developer.cumtd.com/"
@@ -45,12 +51,14 @@ class StopActivity : AppCompatActivity() {
         val title = intent.extras?.getString("title")!!
 
         this.window.statusBarColor = ContextCompat.getColor(this, R.color.statusBarColor)
-        val currentNightMode = this.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val currentNightMode =
+            this.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         when (currentNightMode) {
             Configuration.UI_MODE_NIGHT_NO -> {
                 this.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             } // Night mode is not active, we're using the light theme
         }
+
 
         toolbar = findViewById(R.id.toolbar2)
         toolbar.title = title
@@ -69,16 +77,30 @@ class StopActivity : AppCompatActivity() {
         listview.adapter = adapter
         warning = findViewById(R.id.warning)
 
+        listview.setOnItemClickListener()
+        { parent, view, position, id ->
+            val intent = Intent(this, TripActivity::class.java)
+            intent.putExtra("tripid", buses[position].tripId)
+            intent.putExtra("title", buses[position].headSign)
+            intent.putExtra("stopid", stopId)
+            startActivity(intent)
+        }
 
+        swipeLayout.isRefreshing = true
         getDepartures(buses)
     }
 
 
-    private fun getDepartures(input: MutableList<StopActivity.Bus>) {
+    private fun getDepartures(input: MutableList<Bus>) {
+        val okHttpClient: OkHttpClient = OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .build()
+
         val retrofit =
             Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
                 .build()
         val service = retrofit.create(getdeparturesbystop::class.java)
         val call = service.getDeparturesByStop(stopId, 60, key)
@@ -90,40 +112,48 @@ class StopActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val apiResponse = response.body()!!
                     input.clear()
+
                     if (apiResponse.Buses.isEmpty()) {
                         warning.text = getString(R.string.no_departure)
                     } else {
                         warning.text = ""
-                        for (i in 0 until apiResponse.Buses.size) {
-                            val color = apiResponse.Buses[i].route!!.Color!!
-                            val expected = apiResponse.Buses[i].ExpectedMins!!
-                            val headsign = apiResponse.Buses[i].HeadSign!!
-                            val destination = apiResponse.Buses[i].trip!!.TripHeadsign!!
-                            val isIstop = apiResponse.Buses[i].IsIstop!!
-                            val bus =
-                                StopActivity.Bus(color, headsign, destination, expected, isIstop)
+                        for (i in apiResponse.Buses) {
+                            val color = i.route!!.Color!!
+                            val expected = i.ExpectedMins!!
+                            val headsign = i.HeadSign!!
+                            val destination = i.trip!!.TripHeadsign!!
+                            val isIstop = i.IsIstop!!
+                            val tripId = i.trip!!.TripId!!
+                            val isMornitored = i.IsMonitored!!
+                            val bus = Bus(
+                                color,
+                                headsign,
+                                destination,
+                                expected,
+                                isIstop,
+                                tripId,
+                                isMornitored
+                            )
                             input.add(bus)
-
                         }
                     }
 
                     adapter.notifyDataSetChanged()
                     swipeLayout.isRefreshing = false
                     Snackbar.make(
-                        swipeLayout,
-                        "Departures Updated",
-                        Snackbar.LENGTH_SHORT
+                        swipeLayout, "Departures Updated", Snackbar.LENGTH_SHORT
                     ).show()
                 }
+
             }
 
             override fun onFailure(call: Call<BusResponse>, t: Throwable) {
                 swipeLayout.isRefreshing = false
-                Snackbar.make(swipeLayout, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+//                Snackbar.make(swipeLayout, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                warning.text = t.message
             }
         })
     }
-
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

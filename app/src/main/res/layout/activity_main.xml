@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
-    android:orientation="vertical"
     android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity.MainActivity">
 
     <TextView
-        android:id="@+id/permission_warning"
+        android:id="@+id/warning_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:fontFamily="@font/produc_sans" />
+        android:layout_marginStart="56dp"
+        android:layout_marginEnd="56dp"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/appbar_layout"
@@ -23,9 +30,8 @@
         android:layout_height="?actionBarSize"
         android:background="@color/toolbarColor"
         android:elevation="@dimen/cardview_default_elevation"
-        app:subtitleTextAppearance="@android:style/TextAppearance.Material.Widget.Toolbar.Subtitle"
+        app:layout_constraintTop_toTopOf="parent"
         app:title="@string/app_name"
-        app:titleTextAppearance="@android:style/TextAppearance.Material.Widget.Toolbar.Title"
         tools:text="Title">
 
     </com.google.android.material.appbar.MaterialToolbar>
@@ -33,9 +39,9 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="?actionBarSize"
-        android:background="@color/backgroundColor">
+        android:layout_height="match_parent"
+        android:background="@color/backgroundColor"
+        android:layout_marginTop="?actionBarSize">
 
         <ListView
             android:id="@+id/list"
@@ -43,5 +49,4 @@
             android:layout_height="wrap_content"
             android:divider="@null" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

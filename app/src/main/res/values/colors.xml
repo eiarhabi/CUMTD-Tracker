@@ -28,4 +28,6 @@
     <color name="app_color_dark">#B1B8DF</color>
 
     <color name="icon_color">@color/black</color>
+
+    <color name="hint_color">#808080</color>s
 </resources>

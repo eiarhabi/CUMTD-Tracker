@@ -1,4 +1,4 @@
-package club.ourail.cumtdtracker
+package club.ourail.cumtdtracker.MainActivity
 
 import android.Manifest
 import android.content.Intent
@@ -10,22 +10,25 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AbsListView
 import android.widget.ListView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import club.ourail.cumtdtracker.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
+import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
@@ -37,12 +40,13 @@ class MainActivity : AppCompatActivity() {
     )
 
 
-    private var lat = -9999.99 //by Delegates.notNull<Double>()
-    private var lon = -9999.99 //by Delegates.notNull<Double>()
-    private val url = "https://developer.cumtd.com/"
-    private var key = "e6a7c2b0bdb741569cc69a1505a6c08e"
+    private var lat = -9999.99
+    private var lon = -9999.99
+    private val url = "https://developer.cumtd.com/"//resources.getString(R.string.url)
+    private var key = "e6a7c2b0bdb741569cc69a1505a6c08e"//resources.getString(R.string.api_key)
 
     private var stops = mutableListOf<Stop>()
+    private lateinit var warning: TextView
     private lateinit var listview: ListView
     private lateinit var swipeLayout: SwipeRefreshLayout
     private lateinit var adapter: StopListAdapter
@@ -56,8 +60,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        checkPermission()
 
         this.window.statusBarColor = ContextCompat.getColor(this, R.color.statusBarColor)
         val currentNightMode =
@@ -77,13 +79,15 @@ class MainActivity : AppCompatActivity() {
         adapter = StopListAdapter(stops, applicationContext)
         listview.adapter = adapter
 
+        warning = findViewById(R.id.warning_main)
+
 
         swipeLayout = findViewById(R.id.main)
         swipeLayout.isEnabled = true
-        swipeLayout.setOnRefreshListener()
-        {
+        swipeLayout.setOnRefreshListener {
             getLocation()
         }
+
 
         listview.setOnItemClickListener()
         { parent, view, position, id ->
@@ -98,18 +102,17 @@ class MainActivity : AppCompatActivity() {
 
         listview.setOnScrollListener(object : AbsListView.OnScrollListener {
             override fun onScroll(p0: AbsListView?, p1: Int, p2: Int, p3: Int) {
-                swipeLayout.isEnabled = false
+                swipeLayout.isEnabled = listview.firstVisiblePosition == 0
             }
 
-            override fun onScrollStateChanged(p0: AbsListView?, p1: Int) {
-                if (p1 == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-                    swipeLayout.isEnabled = true
-                }
-            }
+            override fun onScrollStateChanged(p0: AbsListView?, p1: Int) {}
         })
+
+        swipeLayout.isRefreshing = true
+        checkPermission()
     }
 
-
+    @Throws(Exception::class)
     private fun getLocation() {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location ->
@@ -122,12 +125,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getNearbyStopList(input: MutableList<Stop>) {
+        val okHttpClient: OkHttpClient = OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .build()
 
         val retrofit =
             Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
                 .build()
+
         val service = retrofit.create(getstopsbylatlon::class.java)
         val call = service.getStopByLatLon(lat.toString(), lon.toString(), key)
         call.enqueue(object : Callback<StopResponse> {
@@ -136,13 +144,12 @@ class MainActivity : AppCompatActivity() {
                 response: Response<StopResponse>
             ) {
                 if (response.isSuccessful) {
-                    val apiResponse = response.body()!!
                     input.clear()
-                    for (i in 0 until apiResponse.stops.size) {
-                        val code = apiResponse.stops[i].StopName!!
-                        val distance = (apiResponse.stops[i].StopDistance!!).toDouble()
-                        val name = apiResponse.stops[i].StopName!!
-                        val id = apiResponse.stops[i].StopId!!
+                    for (i in response.body()!!.stops) {
+                        val code = i.StopName!!
+                        val distance = i.StopDistance!!.toDouble()
+                        val name = i.StopName!!
+                        val id = i.StopId!!
 
                         val stop = Stop(code, id, name, distance)
                         input.add(stop)
@@ -150,27 +157,28 @@ class MainActivity : AppCompatActivity() {
 
                     adapter.notifyDataSetChanged()
                     swipeLayout.isRefreshing = false
-                    Snackbar.make(swipeLayout, "Stations Updated", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(swipeLayout, "Nearby Stations Updated", Snackbar.LENGTH_SHORT)
+                        .show()
                 }
             }
 
             override fun onFailure(call: Call<StopResponse>, t: Throwable) {
                 swipeLayout.isRefreshing = false
-                Snackbar.make(swipeLayout, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                warning.text = t.message
+//                Snackbar.make(swipeLayout, t.message.toString(), Snackbar.LENGTH_SHORT).show()
             }
         })
     }
 
 
-    private fun startLocationUpdates() {
+    fun startLocationUpdates() {
         locationRequest = LocationRequest()
         locationRequest.interval = 1000
         locationRequest.fastestInterval = 1000
         locationRequest.smallestDisplacement = 100f // 170 m = 0.1 mile
         locationRequest.priority =
-            LocationRequest.PRIORITY_HIGH_ACCURACY //set according to your app function
+            LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY //set according to your app function
         locationCallback = object : LocationCallback() {}
-
         fusedLocationClient.requestLocationUpdates(
             locationRequest,
             locationCallback,
@@ -192,7 +200,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         startLocationUpdates()
-        getNearbyStopList(stops)
+        adapter.notifyDataSetChanged()
     }
 
     private fun checkPermission() {
@@ -206,6 +214,8 @@ class MainActivity : AppCompatActivity() {
                 ),
                 1
             )
+        } else {
+            getLocation()
         }
     }
 
@@ -215,17 +225,17 @@ class MainActivity : AppCompatActivity() {
     ) {
         when (requestCode) {
             1 -> {
-                if (grantResults.isNotEmpty()) {
-                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        getLocation()
-                    } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                        Snackbar.make(
-                            swipeLayout,
-                            "Permission denied. Please enable location manually.",
-                            Snackbar.LENGTH_SHORT
-                        ).show()
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getLocation()
+                } else
+                    if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                        warning.text = "Permission denied. Please enable location manually."
+//                        Snackbar.make(
+//                            swipeLayout,
+//                            "Permission denied. Please enable location manually.",
+//                            Snackbar.LENGTH_SHORT
+//                        ).show()
                     }
-                }
                 return
             }
         }
@@ -237,14 +247,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        var itemId = item?.itemId
-        if (itemId == R.id.settings) {
-            val intent = Intent(this, SettingsActivity::class.java)
-//            val element = stops[0].stopid // The item that was clicked
-//            val title = stops[0].stopname // The item that was clicked
-//            intent.putExtra("stopid", element)
-//            intent.putExtra("title", title)
-            startActivity(intent)
+        when (item?.itemId) {
+            R.id.settings -> {
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.search -> {
+                val intent = Intent(this, SearchActivity::class.java)
+                startActivity(intent)
+            }
         }
         return super.onOptionsItemSelected(item)
     }

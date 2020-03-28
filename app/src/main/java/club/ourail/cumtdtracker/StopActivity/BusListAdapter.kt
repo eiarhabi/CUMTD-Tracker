@@ -2,8 +2,8 @@ package club.ourail.cumtdtracker
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.drawable.AnimationDrawable
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 
+
 class BusListAdapter(items: MutableList<StopActivity.Bus>, context: Context) :
     ArrayAdapter<StopActivity.Bus>(context, R.layout.listview_text, items) {
     private class BusListHolder {
@@ -24,6 +25,7 @@ class BusListAdapter(items: MutableList<StopActivity.Bus>, context: Context) :
         internal var mins: TextView? = null
         internal var iStop: ImageView? = null
         internal var circle: ImageView? = null
+        internal var monitored: ImageView? = null
     }
 
     @SuppressLint("ViewHolder")
@@ -38,27 +40,27 @@ class BusListAdapter(items: MutableList<StopActivity.Bus>, context: Context) :
         Holder.mins = view.findViewById(R.id.mins) as TextView
         Holder.iStop = view.findViewById(R.id.iStop) as ImageView
         Holder.circle = view.findViewById(R.id.circle) as ImageView
+        Holder.monitored = view.findViewById<ImageView>(R.id.is_monitored)
 
-        var istop: Drawable? = null
-        val currentNightMode =
-            context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        when (currentNightMode) {
-            Configuration.UI_MODE_NIGHT_NO -> {
-                istop = ContextCompat.getDrawable(context, R.drawable.ic_istop_black)
-            }
-            Configuration.UI_MODE_NIGHT_YES -> {
-                istop = ContextCompat.getDrawable(context, R.drawable.ic_istop_white)
-            }
-        }
+        var istop: Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_istop_white)
+//        val currentNightMode =
+//            context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+//        when (currentNightMode) {
+//            Configuration.UI_MODE_NIGHT_NO -> {
+//                istop = ContextCompat.getDrawable(context, R.drawable.ic_istop_black)
+//            }
+//            Configuration.UI_MODE_NIGHT_YES -> {
+//                istop = ContextCompat.getDrawable(context, R.drawable.ic_istop_white)
+//            }
+//        }
 
         val bus = getItem(position)
         Holder.destination!!.text = bus!!.dest
         Holder.route!!.text = bus.headSign
-        Log.e("color: ", bus.color)
         Holder.mins!!.text = bus.expectedMins.toString()
-        if (bus.isIstop) {
-            Holder.iStop?.setImageDrawable(istop!!)
-        }
+        Holder.iStop!!.visibility = if (bus.isIstop) View.VISIBLE else View.INVISIBLE
+        Holder.monitored!!.visibility = View.INVISIBLE
+
 
         var circle: Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_circle)
         DrawableCompat.setTint(
@@ -67,7 +69,14 @@ class BusListAdapter(items: MutableList<StopActivity.Bus>, context: Context) :
         )
         Holder.circle!!.setImageDrawable(circle)
 
+        if (bus.isMonitored) {
+            val temp = Holder.monitored!!
+            temp.visibility = View.VISIBLE
+            temp.setBackgroundResource(R.drawable.ic_rss_feed_white_24dp_animated)
+            val frameAnimation = temp.background as AnimationDrawable
+            frameAnimation.start()
+        }
 
-        return view //super.getView(position, convertView, parent)
+        return view
     }
 }

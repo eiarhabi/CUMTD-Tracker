@@ -8,7 +8,7 @@
             android:entryValues="@array/units_value"
             android:icon="@drawable/ic_straighten_white_24dp"
             android:key="isMetric"
-            android:title="Use Metric or Imperial System"
+            android:title="Unit"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 </PreferenceScreen>

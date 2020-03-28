@@ -45,9 +45,20 @@
                 android:layout_width="14sp"
                 android:layout_height="14sp"
                 android:layout_marginStart="8dp"
-                android:layout_marginBottom="2dp"
+                android:layout_marginBottom="4dp"
+                app:layout_constraintBottom_toBottomOf="@id/bus_sign"
                 app:layout_constraintStart_toEndOf="@id/bus_sign"
-                app:layout_constraintBottom_toBottomOf="@id/bus_sign" />
+                android:contentDescription="@string/istop_description"/>
+
+            <ImageView
+                android:id="@+id/is_monitored"
+                android:layout_width="14sp"
+                android:layout_height="14sp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/is_monitored" />
 
             <TextView
                 android:id="@+id/bus_destination"
