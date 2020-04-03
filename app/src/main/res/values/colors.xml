@@ -10,12 +10,6 @@
     <color name="toolbarColor">@color/background_color_light</color>
     <color name="chipBackgroundColor">@color/background_color_light</color>
 
-    <color name="ic_launcher_background">#FFFFFF</color>
-
-    <style name="Widget.AppbarTextView" parent="Widget.AppCompat.TextView">
-        <item name="android:textColor">@color/white</item>
-    </style>
-
     <color name="notification">#3F51B5</color>
     <color name="icon_background">#ff3f51b5</color>
 
@@ -29,5 +23,5 @@
 
     <color name="icon_color">@color/black</color>
 
-    <color name="hint_color">#808080</color>s
+    <color name="hint_color">#808080</color>
 </resources>

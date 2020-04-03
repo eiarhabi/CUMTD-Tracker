@@ -1,82 +1,32 @@
 package club.ourail.cumtdtracker
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.AnimationDrawable
-import android.graphics.drawable.Drawable
-import android.util.Log
+import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
+import androidx.recyclerview.widget.RecyclerView
 
 
-class BusListAdapter(items: MutableList<StopActivity.Bus>, context: Context) :
-    ArrayAdapter<StopActivity.Bus>(context, R.layout.listview_text, items) {
-    private class BusListHolder {
-        // var stop = Stop(code, id, lat, lon, name, distance)
-        internal var destination: TextView? = null
-        internal var route: TextView? = null
-        internal var mins: TextView? = null
-        internal var iStop: ImageView? = null
-        internal var circle: ImageView? = null
-        internal var monitored: ImageView? = null
+class BusListAdapter(val list: MutableList<StopActivity.Bus>) :
+    RecyclerView.Adapter<BusHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BusHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        return BusHolder(inflater, parent)
     }
 
-    @SuppressLint("ViewHolder")
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        //var view = convertView
-        val inflater = LayoutInflater.from(context)
-        var view = inflater.inflate(R.layout.listview_bus, parent, false)
+    override fun getItemCount(): Int = list.size
 
-        var Holder = BusListHolder()
-        Holder.destination = view!!.findViewById(R.id.bus_destination) as TextView
-        Holder.route = view.findViewById(R.id.bus_sign) as TextView
-        Holder.mins = view.findViewById(R.id.mins) as TextView
-        Holder.iStop = view.findViewById(R.id.iStop) as ImageView
-        Holder.circle = view.findViewById(R.id.circle) as ImageView
-        Holder.monitored = view.findViewById<ImageView>(R.id.is_monitored)
+    override fun onBindViewHolder(holder: BusHolder, position: Int) {
+        val temp = list[position]
 
-        var istop: Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_istop_white)
-//        val currentNightMode =
-//            context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-//        when (currentNightMode) {
-//            Configuration.UI_MODE_NIGHT_NO -> {
-//                istop = ContextCompat.getDrawable(context, R.drawable.ic_istop_black)
-//            }
-//            Configuration.UI_MODE_NIGHT_YES -> {
-//                istop = ContextCompat.getDrawable(context, R.drawable.ic_istop_white)
-//            }
-//        }
-
-        val bus = getItem(position)
-        Holder.destination!!.text = bus!!.dest
-        Holder.route!!.text = bus.headSign
-        Holder.mins!!.text = bus.expectedMins.toString()
-        Holder.iStop!!.visibility = if (bus.isIstop) View.VISIBLE else View.INVISIBLE
-        Holder.monitored!!.visibility = View.INVISIBLE
-
-
-        var circle: Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_circle)
-        DrawableCompat.setTint(
-            DrawableCompat.wrap(circle!!),
-            Color.parseColor("#" + bus.color)
-        )
-        Holder.circle!!.setImageDrawable(circle)
-
-        if (bus.isMonitored) {
-            val temp = Holder.monitored!!
-            temp.visibility = View.VISIBLE
-            temp.setBackgroundResource(R.drawable.ic_rss_feed_white_24dp_animated)
-            val frameAnimation = temp.background as AnimationDrawable
-            frameAnimation.start()
+        holder.bind(temp)
+        holder.itemView.setOnClickListener { view ->
+            val temp = list[position]
+            val intent = Intent(view?.context, TripActivity::class.java)
+            intent.putExtra("tripid", temp.tripId)
+            intent.putExtra("title", "${temp.shortName} ${temp.longName} ${temp.direction}")
+            intent.putExtra("stopid", temp.stopId)
+            view?.context?.startActivity(intent)
         }
-
-        return view
     }
 }

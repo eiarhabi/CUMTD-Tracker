@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import club.ourail.cumtdtracker.*
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -47,10 +49,10 @@ class MainActivity : AppCompatActivity() {
 
     private var stops = mutableListOf<Stop>()
     private lateinit var warning: TextView
-    private lateinit var listview: ListView
+    private lateinit var listview: RecyclerView
     private lateinit var swipeLayout: SwipeRefreshLayout
-    private lateinit var adapter: StopListAdapter
-    private lateinit var toolbar: Toolbar
+    private lateinit var adapter: RecyclerView.Adapter<StopHolder>
+    private lateinit var manager: RecyclerView.LayoutManager
     private lateinit var appBarLayout: com.google.android.material.appbar.MaterialToolbar
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -74,42 +76,25 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(appBarLayout)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        startLocationUpdates()
 
+        manager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        adapter = StopListAdapter(stops)
         listview = findViewById(R.id.list)
-        adapter = StopListAdapter(stops, applicationContext)
+        listview.layoutManager = manager
         listview.adapter = adapter
 
         warning = findViewById(R.id.warning_main)
 
-
         swipeLayout = findViewById(R.id.main)
-        swipeLayout.isEnabled = true
         swipeLayout.setOnRefreshListener {
             getLocation()
         }
 
-
-        listview.setOnItemClickListener()
-        { parent, view, position, id ->
-            val element = stops[position].stopid // The item that was clicked
-            val title = stops[position].stopname // The item that was clicked
-            val intent = Intent(this, StopActivity::class.java)
-            intent.putExtra("stopid", element)
-            intent.putExtra("title", title)
-            startActivity(intent)
-        }
-
-
-        listview.setOnScrollListener(object : AbsListView.OnScrollListener {
-            override fun onScroll(p0: AbsListView?, p1: Int, p2: Int, p3: Int) {
-                swipeLayout.isEnabled = listview.firstVisiblePosition == 0
-            }
-
-            override fun onScrollStateChanged(p0: AbsListView?, p1: Int) {}
-        })
-
         swipeLayout.isRefreshing = true
         checkPermission()
+
+        getLocation()
     }
 
     @Throws(Exception::class)
@@ -126,7 +111,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getNearbyStopList(input: MutableList<Stop>) {
         val okHttpClient: OkHttpClient = OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.SECONDS)
+            .connectTimeout(5, TimeUnit.SECONDS)
             .build()
 
         val retrofit =
@@ -146,9 +131,10 @@ class MainActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     input.clear()
                     for (i in response.body()!!.stops) {
-                        val code = i.StopName!!
+                        val code = i.StopCode!!
                         val distance = i.StopDistance!!.toDouble()
-                        val name = i.StopName!!
+                        val name = i.StopPoints[0].StopName!!.substringBeforeLast("(")
+                            .replace(" & ", " and ")
                         val id = i.StopId!!
 
                         val stop = Stop(code, id, name, distance)
@@ -174,7 +160,7 @@ class MainActivity : AppCompatActivity() {
         locationRequest = LocationRequest()
         locationRequest.smallestDisplacement = 50f // 170 m = 0.1 mile
         locationRequest.priority =
-            LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY //set according to your app function
+            LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
         locationCallback = object : LocationCallback() {}
         fusedLocationClient.requestLocationUpdates(
             locationRequest,

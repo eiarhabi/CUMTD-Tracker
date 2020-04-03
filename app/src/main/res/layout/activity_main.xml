@@ -28,7 +28,7 @@
         android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
-        android:background="@color/toolbarColor"
+        android:background="@color/backgroundColor"
         android:elevation="@dimen/cardview_default_elevation"
         app:layout_constraintTop_toTopOf="parent"
         app:title="@string/app_name"
@@ -40,13 +40,15 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/backgroundColor"
-        android:layout_marginTop="?actionBarSize">
+        android:layout_marginTop="?actionBarSize"
+        android:background="@color/backgroundColor">
 
-        <ListView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="@null" />
+            android:colorEdgeEffect="@color/colorPrimary"
+            android:divider="@null"
+            android:scrollbars="vertical" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

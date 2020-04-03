@@ -3,13 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="64dp"
+    android:background="?android:attr/selectableItemBackground"
     android:orientation="vertical"
-    android:paddingHorizontal="16dp"
     android:theme="@style/Theme.MaterialComponents.DayNight">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginStart="16dp"
         android:layout_weight="1">
 
         <ImageView
@@ -17,6 +18,17 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/route_number"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -29,6 +41,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/mins"
             app:layout_constraintTop_toTopOf="parent">
+
 
             <TextView
                 android:id="@+id/bus_sign"
@@ -46,19 +59,11 @@
                 android:layout_height="14sp"
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="4dp"
+                android:contentDescription="@string/istop_description"
+                android:src="@drawable/ic_istop_white"
                 app:layout_constraintBottom_toBottomOf="@id/bus_sign"
-                app:layout_constraintStart_toEndOf="@id/bus_sign"
-                android:contentDescription="@string/istop_description"/>
+                app:layout_constraintStart_toEndOf="@id/bus_sign" />
 
-            <ImageView
-                android:id="@+id/is_monitored"
-                android:layout_width="14sp"
-                android:layout_height="14sp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="@string/is_monitored" />
 
             <TextView
                 android:id="@+id/bus_destination"
@@ -73,17 +78,24 @@
 
         <TextView
             android:id="@+id/mins"
-            android:layout_width="45sp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginEnd="16dp"
             android:fontFamily="monospace"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="34sp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/is_monitored"
+            android:layout_width="14sp"
+            android:layout_height="14sp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="@string/is_monitored"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

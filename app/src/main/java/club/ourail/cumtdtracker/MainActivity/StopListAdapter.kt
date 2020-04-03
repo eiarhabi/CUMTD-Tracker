@@ -1,53 +1,32 @@
 package club.ourail.cumtdtracker
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.preference.PreferenceManager
+import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import club.ourail.cumtdtracker.MainActivity.MainActivity
 
+class StopListAdapter(val list: MutableList<MainActivity.Stop>) :
+    RecyclerView.Adapter<StopHolder>() {
 
-class StopListAdapter(items: MutableList<MainActivity.Stop>, context: Context) :
-    ArrayAdapter<MainActivity.Stop>(context, R.layout.listview_text, items) {
-    private class StopListHolder {
-        internal var name: TextView? = null
-        internal var distance: TextView? = null
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StopHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        return StopHolder(inflater, parent)
     }
 
-    @SuppressLint("ViewHolder")
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var view = convertView
+    override fun getItemCount(): Int = list.size
 
-        val inflater = LayoutInflater.from(context)
-        view = inflater.inflate(R.layout.listview_text, parent, false)
+    override fun onBindViewHolder(holder: StopHolder, position: Int) {
+        val temp = list[position]
 
-        val Holder: StopListHolder = StopListHolder()
-        Holder.name = view!!.findViewById<View>(R.id.stop_name) as TextView
-        Holder.distance = view.findViewById(R.id.stop_distance) as TextView
-
-        val attraction = getItem(position)
-        Holder.name!!.text = attraction!!.stopname
-
-
-        var i = attraction.stopdistance
-        if (PreferenceManager.getDefaultSharedPreferences(context)
-                .getString("isMetric", "imperial")!! == "metric"
-        ) {
-            i *= 0.3048
-            var str = if (i > 1200) (i / 1000).round(1).toString() + " km" else i.toInt()
-                .toString() + " m"
-            Holder.distance!!.text = str
-        } else {
-            var str = if (i > 4000) (i / 5280).round(1).toString() + " mi." else i.toInt()
-                .toString() + " ft."
-            Holder.distance!!.text = str
+        holder.bind(temp)
+        holder.itemView.setOnClickListener { view ->
+            val intent = Intent(view?.context, StopActivity::class.java)
+            intent.putExtra("title", temp.stopname)
+            intent.putExtra("stopid", temp.stopid)
+            view?.context?.startActivity(intent)
         }
-
-        return view
     }
 }
+
 

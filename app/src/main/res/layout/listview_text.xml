@@ -6,6 +6,7 @@
     android:layout_height="56dp"
     android:orientation="vertical"
     android:paddingHorizontal="16dp"
+    android:background="?android:attr/selectableItemBackground"
     android:theme="@style/Theme.MaterialComponents.DayNight">
 
     <androidx.constraintlayout.widget.ConstraintLayout

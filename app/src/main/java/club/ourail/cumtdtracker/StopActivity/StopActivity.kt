@@ -1,14 +1,14 @@
 package club.ourail.cumtdtracker
 
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import okhttp3.OkHttpClient
@@ -28,7 +28,12 @@ class StopActivity : AppCompatActivity() {
         var expectedMins: Int,
         var isIstop: Boolean,
         var tripId: String,
-        var isMonitored: Boolean
+        var isMonitored: Boolean,
+        var stopId: String,
+        var colorText: String,
+        var shortName:String,
+        var longName: String,
+        var direction:String
     )
 
     private val url = "https://developer.cumtd.com/"
@@ -36,10 +41,11 @@ class StopActivity : AppCompatActivity() {
     private lateinit var stopId: String
 
     private var buses = mutableListOf<Bus>()
-    private lateinit var listview: ListView
+    private lateinit var listview: RecyclerView
     private lateinit var swipeLayout: SwipeRefreshLayout
-    private lateinit var adapter: BusListAdapter
+    private lateinit var adapter: RecyclerView.Adapter<BusHolder>
     private lateinit var warning: TextView
+    private lateinit var manager: RecyclerView.LayoutManager
     private lateinit var toolbar: androidx.appcompat.widget.Toolbar
 
 
@@ -72,20 +78,13 @@ class StopActivity : AppCompatActivity() {
             getDepartures(buses)
         }
 
-
+        manager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        adapter = BusListAdapter(buses)
         listview = findViewById(R.id.list2)
-        adapter = BusListAdapter(buses, applicationContext)
+        listview.layoutManager = manager
         listview.adapter = adapter
-        warning = findViewById(R.id.warning)
 
-        listview.setOnItemClickListener()
-        { parent, view, position, id ->
-            val intent = Intent(this, TripActivity::class.java)
-            intent.putExtra("tripid", buses[position].tripId)
-            intent.putExtra("title", buses[position].headSign)
-            intent.putExtra("stopid", stopId)
-            startActivity(intent)
-        }
+        warning = findViewById(R.id.warning)
 
         swipeLayout.isRefreshing = true
         getDepartures(buses)
@@ -126,6 +125,11 @@ class StopActivity : AppCompatActivity() {
                             val isIstop = i.IsIstop!!
                             val tripId = i.trip!!.TripId!!
                             val isMornitored = i.IsMonitored!!
+                            val colortext = i.route!!.ColorText!!
+                            val shortname = i.route!!.ShortName!!
+                            val longname = i.route!!.LongName!!
+                            val direction = i.trip!!.Direction!!
+
                             val bus = Bus(
                                 color,
                                 headsign,
@@ -133,7 +137,12 @@ class StopActivity : AppCompatActivity() {
                                 expected,
                                 isIstop,
                                 tripId,
-                                isMornitored
+                                isMornitored,
+                                stopId,
+                                colortext,
+                                shortname,
+                                longname,
+                                direction
                             )
                             input.add(bus)
                         }

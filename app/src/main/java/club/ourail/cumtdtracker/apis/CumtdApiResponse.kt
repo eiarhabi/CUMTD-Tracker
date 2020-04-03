@@ -76,6 +76,15 @@ class Bus {
 class Route {
     @SerializedName("route_color")
     var Color: String? = null
+
+    @SerializedName("route_short_name")
+    var ShortName: String? = null
+
+    @SerializedName("route_long_name")
+    var LongName: String? = null
+
+    @SerializedName("route_text_color")
+    var ColorText: String? = null
 }
 
 class Trip {
@@ -84,6 +93,9 @@ class Trip {
 
     @SerializedName("trip_headsign")
     var TripHeadsign: String? = null
+
+    @SerializedName("direction")
+    var Direction: String? = null
 }
 
 class Status {
