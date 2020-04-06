@@ -28,5 +28,4 @@ interface getstoptimesbytrip {
         @Query("trip_id") tripId: String,
         @Query("key") apikey: String
     ): Call<TripResponse>
-
 }

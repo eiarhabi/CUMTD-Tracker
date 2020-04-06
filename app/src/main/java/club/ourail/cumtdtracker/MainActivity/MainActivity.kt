@@ -8,11 +8,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.AbsListView
-import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -113,7 +110,6 @@ class MainActivity : AppCompatActivity() {
         val okHttpClient: OkHttpClient = OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.SECONDS)
             .build()
-
         val retrofit =
             Retrofit.Builder()
                 .baseUrl(url)
@@ -166,7 +162,7 @@ class MainActivity : AppCompatActivity() {
             locationRequest,
             locationCallback,
             null /* Looper */
-        )
+        ).addOnSuccessListener { getLocation() }
     }
 
     // stop location updates
@@ -209,7 +205,7 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             1 -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getLocation()
+                    startLocationUpdates()
                 } else
                     if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                         warning.text = "Permission denied. Please enable location manually."
