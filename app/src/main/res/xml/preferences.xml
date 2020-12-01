@@ -10,5 +10,9 @@
             android:key="isMetric"
             android:title="Unit"
             app:useSimpleSummaryProvider="true" />
+        <Preference
+            android:key="isList"
+            android:defaultValue="true"/>
+
     </PreferenceCategory>
 </PreferenceScreen>

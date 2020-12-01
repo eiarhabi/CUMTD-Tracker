@@ -1,16 +1,24 @@
 package club.ourail.cumtdtracker
 
 import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,9 +39,9 @@ class StopActivity : AppCompatActivity() {
         var isMonitored: Boolean,
         var stopId: String,
         var colorText: String,
-        var shortName:String,
+        var shortName: String,
         var longName: String,
-        var direction:String
+        var direction: String
     )
 
     private val url = "https://developer.cumtd.com/"
@@ -47,6 +55,7 @@ class StopActivity : AppCompatActivity() {
     private lateinit var warning: TextView
     private lateinit var manager: RecyclerView.LayoutManager
     private lateinit var toolbar: androidx.appcompat.widget.Toolbar
+    private lateinit var fab: FloatingActionButton
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,6 +82,12 @@ class StopActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(arrow)
 
+        fab = findViewById(R.id.fab2)
+        fab.setOnClickListener {
+            swipeLayout.isRefreshing = true
+            getDepartures(buses)
+        }
+
         swipeLayout = findViewById(R.id.stop)
         swipeLayout.setOnRefreshListener {
             getDepartures(buses)
@@ -83,6 +98,12 @@ class StopActivity : AppCompatActivity() {
         listview = findViewById(R.id.list2)
         listview.layoutManager = manager
         listview.adapter = adapter
+        listview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 0) fab.hide() else fab.show()
+            }
+        })
 
         warning = findViewById(R.id.warning)
 
@@ -109,26 +130,30 @@ class StopActivity : AppCompatActivity() {
                 call: Call<BusResponse>,
                 response: Response<BusResponse>
             ) {
+                swipeLayout.isRefreshing = false
                 if (response.isSuccessful) {
+                    Snackbar.make(
+                        swipeLayout, "Departures Updated", Snackbar.LENGTH_SHORT
+                    ).setAnchorView(R.id.fab2).show()
                     val apiResponse = response.body()!!
                     input.clear()
 
-                    if (apiResponse.Buses.isEmpty()) {
+                    if (apiResponse.departures.isEmpty()) {
                         warning.text = getString(R.string.no_departure)
                     } else {
                         warning.text = ""
-                        for (i in apiResponse.Buses) {
-                            val color = i.route!!.Color!!
-                            val expected = i.ExpectedMins!!
-                            val headsign = i.HeadSign!!
-                            val destination = i.trip!!.TripHeadsign!!
-                            val isIstop = i.IsIstop!!
-                            val tripId = i.trip!!.TripId!!
-                            val isMornitored = i.IsMonitored!!
-                            val colortext = i.route!!.ColorText!!
-                            val shortname = i.route!!.ShortName!!
-                            val longname = i.route!!.LongName!!
-                            val direction = i.trip!!.Direction!!
+                        for (i in apiResponse.departures) {
+                            val color = i.route.route_color
+                            val expected = i.expected_mins
+                            val headsign = i.headsign
+                            val destination = i.trip.trip_headsign
+                            val isIstop = i.is_istop
+                            val tripId = i.trip.trip_id
+                            val isMornitored = i.is_monitored
+                            val colortext = i.route.route_text_color
+                            val shortname = i.route.route_short_name
+                            val longname = i.route.route_long_name
+                            val direction = i.trip.direction
 
                             val bus = Bus(
                                 color,
@@ -149,20 +174,33 @@ class StopActivity : AppCompatActivity() {
                     }
 
                     adapter.notifyDataSetChanged()
-                    swipeLayout.isRefreshing = false
-                    Snackbar.make(
-                        swipeLayout, "Departures Updated", Snackbar.LENGTH_SHORT
-                    ).show()
+                } else {
+                    val i = GsonBuilder().create()
+                        .fromJson(response.errorBody()?.string(), StopResponse::class.java).status
+                    warning.text = "Error code ${i.code}:\n${i.msg}."
                 }
 
             }
 
             override fun onFailure(call: Call<BusResponse>, t: Throwable) {
                 swipeLayout.isRefreshing = false
-//                Snackbar.make(swipeLayout, t.message.toString(), Snackbar.LENGTH_SHORT).show()
                 warning.text = t.message
             }
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.stop_activity_menu, menu)
+        menu.findItem(R.id.website).setOnMenuItemClickListener {
+            val url = "https://mtd.org/maps-and-schedules/bus-stops/info/$stopId"
+            val builder = CustomTabsIntent.Builder()
+            builder.setShowTitle(true)
+            val customTabsIntent = builder.build()
+            customTabsIntent.launchUrl(this, Uri.parse(url))
+
+            return@setOnMenuItemClickListener true
+        }
+        return super.onCreateOptionsMenu(menu)
     }
 
 

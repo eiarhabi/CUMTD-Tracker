@@ -13,4 +13,9 @@
         <!-- ... -->
     </style>
 
+    <style name="BottomNavigationTheme" parent="Theme.MaterialComponents">
+        <!-- Customize your theme here. -->
+        <item name="colorSurface">@color/backgroundColor</item>
+    </style>
+
 </resources>

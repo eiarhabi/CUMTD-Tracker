@@ -1,121 +1,74 @@
 package club.ourail.cumtdtracker
 
-import com.google.gson.annotations.SerializedName
+data class StopResponse(
+    var time: String,
+    var stops: List<Stop>,
+    var status: Status
+)
 
-class StopResponse {
-    @SerializedName("time")
-    var time: String? = null
+data class Stop(
+    var stop_id: String,
+    var stop_name: String,
+    var code: String,
+    var distance: Float,
+    var stop_points: List<StopPoint>
+)
 
-    @SerializedName("stops")
-    var stops = ArrayList<Stop>()
-
-    @SerializedName("status")
-    var status: Status? = null
-}
-
-class Stop {
-    @SerializedName("stop_id")
-    var StopId: String? = null
-
-    @SerializedName("stop_name")
-    var StopName: String? = null
-
-    @SerializedName("code")
-    var StopCode: String? = null
-
-    @SerializedName("distance")
-    var StopDistance: Float? = null;
-
-    @SerializedName("stop_points")
-    var StopPoints = ArrayList<StopPoint>()
-}
-
-class StopPoint {
-    @SerializedName("stop_id")
-    var StopId: String? = null
-
-    @SerializedName("stop_lat")
-    var StopLat: Float? = null
-
-    @SerializedName("stop_lon")
-    var StopLon: Float? = null
-
-    @SerializedName("stop_name")
-    var StopName: String? = null
-}
+data class StopPoint(
+    var stop_id: String,
+    var stop_lat: Float,
+    var stop_lon: Float,
+    var stop_name: String
+)
 
 // Departures
-class BusResponse {
-    @SerializedName("departures")
-    var Buses = ArrayList<Bus>()
+data class BusResponse(
+    var departures: List<Bus>,
+    var status: Status
+)
 
-    @SerializedName("status")
-    var status: Status? = null
-}
+data class Bus(
+    var headsign: String,
+    var route: Route,
+    var trip: Trip,
+    var expected_mins: Int,
+    var is_istop: Boolean,
+    var is_monitored: Boolean
+)
 
-class Bus {
-    @SerializedName("headsign")
-    var HeadSign: String? = null
+data class Route(
+    var route_color: String,
+    var route_short_name: String,
+    var route_long_name: String,
+    var route_text_color: String
+)
 
-    @SerializedName("route")
-    var route: Route? = null
+data class Trip(
+    val trip_id: String,
+    var trip_headsign: String,
+    var direction: String
+)
 
-    @SerializedName("trip")
-    var trip: Trip? = null
-
-    @SerializedName("expected_mins")
-    var ExpectedMins: Int? = null
-
-    @SerializedName("is_istop")
-    var IsIstop: Boolean? = null
-
-    @SerializedName("is_monitored")
-    var IsMonitored: Boolean? = null
-}
-
-class Route {
-    @SerializedName("route_color")
-    var Color: String? = null
-
-    @SerializedName("route_short_name")
-    var ShortName: String? = null
-
-    @SerializedName("route_long_name")
-    var LongName: String? = null
-
-    @SerializedName("route_text_color")
-    var ColorText: String? = null
-}
-
-class Trip {
-    @SerializedName("trip_id")
-    val TripId: String? = null
-
-    @SerializedName("trip_headsign")
-    var TripHeadsign: String? = null
-
-    @SerializedName("direction")
-    var Direction: String? = null
-}
-
-class Status {
-    @SerializedName("code")
-    var code: Int? = null
-
-    @SerializedName("msg")
-    var msg: String? = null
-}
+data class Status(
+    val code: Int,
+    val msg: String
+)
 
 // Trip Stops
-class TripResponse {
-    @SerializedName("stop_times")
-    var StopTimes = ArrayList<TripStop>()
-}
+data class TripResponse(
+    val stop_times: ArrayList<TripStop>,
+    val status:Status
+)
 
-class TripStop {
-    @SerializedName("departure_time")
-    var DepartureTime:String? = null
+data class TripStop(
+    var departure_time: String,
+    var stop_point: StopPoint
+)
 
-    @SerializedName("stop_point")
-    var StopPoint: StopPoint? = null
-}
+data class a(
+    val changeset_id: String,
+    val new_changeset: Boolean,
+    val status: Status,
+    val stops: List<Stop>,
+    val time: String
+)

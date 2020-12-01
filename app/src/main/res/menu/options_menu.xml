@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--    <item-->
+<!--        android:id="@+id/swich_map_list"-->
+<!--        android:icon="@drawable/ic_map"-->
+<!--        android:title="Switch between Map Mode and List Mode"-->
+<!--        app:showAsAction="always|collapseActionView"/>-->
     <item
         android:id="@+id/search"
         android:icon="@drawable/ic_search_white_24dp"
-        android:title="TODO"
+        android:title="Search"
         app:showAsAction="always|collapseActionView" />
     <item
         android:id="@+id/more"

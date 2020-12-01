@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#327AB9</color>
+    <color name="colorPrimaryText">#62C5F6</color>
     <color name="colorPrimaryDark">#327AB9</color>
+    <color name="colorOnSurface">@android:color/white</color>
     <color name="colorAccent">#03DAC5</color>
-    <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
     <color name="statusBarColor">@color/background_color_dark</color>
     <color name="backgroundColor">@color/background_color_dark</color>
     <color name="toolbarColor">@color/background_color_dark</color>

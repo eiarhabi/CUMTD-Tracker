@@ -9,4 +9,6 @@
         <item>imperial</item>
         <item>metric</item>
     </string-array>
+
+    <bool name="is_list"/>
 </resources>
