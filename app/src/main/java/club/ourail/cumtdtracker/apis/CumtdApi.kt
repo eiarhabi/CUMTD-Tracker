@@ -1,6 +1,5 @@
 package club.ourail.cumtdtracker
 
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -29,4 +28,12 @@ interface getstoptimesbytrip {
         @Query("trip_id") tripId: String,
         @Query("key") apikey: String
     ): Call<TripResponse>
+}
+
+interface getstops {
+    @GET("api/v2.2/json/getstops?")
+    fun getStopString(
+        @Query("key") key: String,
+        @Query("changeset_id") changesetId: String
+    ): Call<String>
 }

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "363881452635",
+    "firebase_url": "https://cumtdtracker-1169b.firebaseio.com",
+    "project_id": "cumtdtracker-1169b",
+    "storage_bucket": "cumtdtracker-1169b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:363881452635:android:117eb3648fe42ec8099b7e",
+        "android_client_info": {
+          "package_name": "club.ourail.cumtdtracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "363881452635-ms70a83l2rk5e1mahl2mcdv4rc52ac2t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYtzckN-1EA4gSQjpo66vqgtJLG83DeI0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "363881452635-ms70a83l2rk5e1mahl2mcdv4rc52ac2t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

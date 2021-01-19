@@ -172,9 +172,10 @@ class StopActivity : AppCompatActivity() {
                             input.add(bus)
                         }
                     }
-
+                    listview.visibility = View.VISIBLE
                     adapter.notifyDataSetChanged()
                 } else {
+                    listview.visibility = View.INVISIBLE
                     val i = GsonBuilder().create()
                         .fromJson(response.errorBody()?.string(), StopResponse::class.java).status
                     warning.text = "Error code ${i.code}:\n${i.msg}."
@@ -184,6 +185,7 @@ class StopActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<BusResponse>, t: Throwable) {
                 swipeLayout.isRefreshing = false
+                listview.visibility = View.INVISIBLE
                 warning.text = t.message
             }
         })

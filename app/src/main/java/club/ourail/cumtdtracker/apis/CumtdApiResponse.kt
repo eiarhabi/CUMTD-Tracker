@@ -65,7 +65,7 @@ data class TripStop(
     var stop_point: StopPoint
 )
 
-data class a(
+data class AllStopsResponse(
     val changeset_id: String,
     val new_changeset: Boolean,
     val status: Status,

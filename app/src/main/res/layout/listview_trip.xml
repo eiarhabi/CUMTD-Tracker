@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/listview_trip_layout"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:theme="@style/Theme.MaterialComponents.DayNight">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/stop_name_trip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/stop_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/stop_time"
+            android:layout_width="80sp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:maxLength="8"
+            android:maxLines="1"
+            android:textAlignment="viewEnd"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="RtlCompat" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>

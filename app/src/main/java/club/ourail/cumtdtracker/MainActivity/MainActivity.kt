@@ -25,6 +25,10 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.gson.GsonBuilder
+import org.json.JSONObject
+import java.io.File
+
 
 class MainActivity : AppCompatActivity() {
     class Stop(
@@ -161,6 +165,16 @@ class MainActivity : AppCompatActivity() {
         warning = findViewById(R.id.warning_main)
 
         checkPermission()
+
+        val file = File(applicationContext.filesDir, "getstops.json")
+        if (!file.exists()) {
+            val jsontxt = application.assets.open("getstops.json").bufferedReader().use {
+                it.readText()
+            }
+            file.writeText(jsontxt)
+            val changesetID = JSONObject(jsontxt).getString("changeset_id")
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("version", changesetID).apply()
+        }
     }
 
 
